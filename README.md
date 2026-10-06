@@ -37,10 +37,6 @@ Loaded groups remain available for the current task.
 | `formatting_server.py` | Drawing title and author preparation |
 | `group_agent.py` | Agent loop with dynamic group loading |
 
-Other Python files contain earlier learning stages:
-a calculator server, single-server and multi-server clients,
-an API connectivity check and an agent with all tools loaded at startup.
-
 ## Requirements
 
 - Python 3.13 was used during development.
@@ -127,3 +123,21 @@ question, restart it with a more complete request.
 
 Keep your real key in `.env`.
 The repository includes only the `.env.example` template.
+
+## Interaction diagram
+
+```mermaid
+flowchart TD
+    U["User task"] --> A["Python agent"]
+    A --> M["Groq model"]
+    M -->|"Group selection and tool calls"| A
+    A -->|"Load tools and execute calls"| G["Geometry MCP :8000"]
+    A -->|"Load tools and execute calls"| F["Formatting MCP :8001"]
+    G -->|"Results"| A
+    F -->|"Results"| A
+    A -->|"Tool results"| M
+    A -->|"Final response"| U
+```
+
+The application starts with a brief group catalog. Detailed tool definitions
+are loaded when the model requests a group through `load_tool_group`.
